@@ -11,6 +11,7 @@
         android:layout_width="212dp"
         android:layout_height="215dp"
         android:layout_marginTop="512dp"
+        android:onClick="MonthStat"
         android:text="Monthly expenses"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.964"
@@ -24,6 +25,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="512dp"
         android:text="Expenses for all time"
+        android:onClick="YearStat"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,6 +45,7 @@
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginTop="60dp"
+        android:onClick="AddGasClick"
         android:text="Add gasoline"
         app:layout_constraintEnd_toEndOf="@+id/ToButton"
         app:layout_constraintHorizontal_bias="0.0"
@@ -55,6 +58,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="172dp"
         android:text="About Car"
+        android:onClick="CarInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

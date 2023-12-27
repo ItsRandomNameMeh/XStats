@@ -30,16 +30,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/newExpense"
-        android:layout_width="218dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="352dp"
-        android:layout_marginEnd="156dp"
-        android:text="New expense"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

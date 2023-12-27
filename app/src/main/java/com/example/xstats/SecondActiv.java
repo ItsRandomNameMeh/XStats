@@ -2,39 +2,19 @@ package com.example.xstats;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TimePicker;
+import java.util.Random;
+import java.util.Base64;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 import android.content.SharedPreferences;
-import androidx.appcompat.app.AppCompatActivity;
-
-
-
-
-
-import com.google.android.material.button.MaterialButton;
-
-import java.util.Calendar;
 
 
 public class SecondActiv extends AppCompatActivity {
@@ -42,6 +22,13 @@ public class SecondActiv extends AppCompatActivity {
 
     // Получение экземпляра SharedPreferences
     //SharedPreferences sharedPreferences = getSharedPreferences("my_cache", Context.MODE_PRIVATE);
+    private static final String SHARED_PREFS_NAME = "my_cache";
+    private static final String DATA_KEY_TO = "Next_TO";
+    private static final String ADD_GAS = "gasoline";
+
+    private SharedPreferences sharedPreferences;
+
+    public int km = Generative();
 
 
     Dialog dialog;
@@ -51,21 +38,8 @@ public class SecondActiv extends AppCompatActivity {
         setContentView(R.layout.activity_second);
 
         dialog = new Dialog(SecondActiv.this);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
-        Button button5 = findViewById(R.id.button5);
-        button5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MonthToast(SecondActiv.this, "2131" );
-            }
-        });
-        Button button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EverToast(SecondActiv.this, "317132");
-            }
-        });
         Button CarForm = findViewById(R.id.aboutcar);
         View.OnClickListener goCar = new View.OnClickListener() {
             @Override
@@ -78,24 +52,6 @@ public class SecondActiv extends AppCompatActivity {
 
     }
 
-//    private void showCustomDialog() {//NextTo button click realize
-//        dialog.setContentView(R.layout.custom_dialog_layout);
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        dialog.setCancelable(true);
-//
-//        Button Apply = dialog.findViewById(R.id.materialButtonApply);
-//        Button Cancel = dialog.findViewById(R.id.materialButtonCansel);
-//        EditText STO = findViewById(R.id.currentSTO);
-//
-//        STO.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(SecondActiv.this,"Completed!", Toast.LENGTH_SHORT).show();
-//            }
-//
-//        });
-//        dialog.show();
-//    }
     private void EverToast(Context context, String current_km){
         showToast(current_km+"km");
     }
@@ -103,49 +59,102 @@ public class SecondActiv extends AppCompatActivity {
         showToast(month_km+"km");
     }
 
-    public void ButtnClick(View v){
-        showInputDialog(SecondActiv.this);
+    public int Generative(){
+        Random rnd = new Random();
+        int min = 20;
+        int max = 2000;
+        int randomNumber = rnd.nextInt(max - min + 1) + min;
+        return randomNumber;
+    }
+    public void ButtnClick(View v){//Все кнопки вынесены вне класса инициализации, иначе после нажатия любой, остальные перестанут работать
+        showInputDialog(SecondActiv.this, DATA_KEY_TO);
         setContentView(R.layout.activity_second);
-        String s = SetTxt("Типо подсказка");
-        ShowInfo(s);
     }
 
-    private void showInputDialog(Context context) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle("Next To");
+    public void AddGasClick(View v){
+        showInputDialog2(SecondActiv.this, ADD_GAS);
+        setContentView(R.layout.activity_second);
+    }
 
-        final EditText input = new EditText(context);
-        alertDialog.setView(input);
+    public void MonthStat(View v){
+        MonthToast(SecondActiv.this, Integer.toString(km) );
+    }
 
-        alertDialog.setPositiveButton("ОК",
-                new DialogInterface.OnClickListener() {
+    public void YearStat(View v){
+        EverToast(SecondActiv.this, Integer.toString(km*18));
+    }
+
+    public void CarInfo(View v){//Переход дублируется по той же причине, если этого не сделать, то он перестанет работать
+        Intent intent = new Intent(SecondActiv.this, CarActivity.class);
+        startActivity(intent);
+    }
+    private void showInputDialog(Context context, String INUSE) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
+        EditText txt = new EditText(context);
+
+        ShowInfo("Прошлое ТО было: "+ sharedPreferences.getString(INUSE,""));
+        builder.setTitle("Введите дату следующего ТО\n")
+                .setView(txt)
+                .setMessage("Сохранить?")
+                .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String userInput = input.getText().toString();
-                        showToast("дата следующего ТО (тут должна быть запись в БД): " + userInput);
-                      //  SharedPreferences.Editor editor = sharedPreferences.edit();
-                       // editor.putString("next_to", userInput);
-                        //editor.apply();
+                        saveDataToCache(txt.toString());
+                        Toast.makeText(SecondActiv.this, "Данные сохранены", Toast.LENGTH_SHORT).show();
                     }
-                });
-
-        alertDialog.setNegativeButton("Отмена",
-                new DialogInterface.OnClickListener() {
+                })
+                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        Toast.makeText(SecondActiv.this, "Данные не сохранены", Toast.LENGTH_SHORT).show();
                     }
                 });
 
+        AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void showInputDialog2(Context context, String INUSE) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
+        EditText txt = new EditText(context);
+
+        ShowInfo("Прошлая заправка была на "+sharedPreferences.getString(INUSE,"") + " литров.");
+        builder.setTitle("Сколько заправили сейчас?\n")
+                .setView(txt)
+                .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveDataToCache2(txt.toString());
+                        Toast.makeText(SecondActiv.this, "Данные сохранены", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        Toast.makeText(SecondActiv.this, "Данные не сохранены", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+    private void saveDataToCache(String TO) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(DATA_KEY_TO, TO);
+            editor.commit();
+        }
+    private void saveDataToCache2(String TO) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(ADD_GAS, TO);
+        editor.apply();
     }
 
     private void showToast(String message) {
         Toast.makeText(SecondActiv.this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public String SetTxt(String text)
-    {
-        String S = text;
-        return  S;
     }
 
     @Override
@@ -158,7 +167,27 @@ public class SecondActiv extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
+        showToast("Resume");
+        updateData();
+        restartAnimations();
+        registerEventListeners();
     }
+
+    private void updateData() {
+        // Обновление данных
+    }
+
+    private void restartAnimations() {
+        // Перезапуск анимаций
+    }
+
+    private void registerEventListeners() {
+        // Регистрация слушателей событий
+    }
+
+
+
+
 
     @Override
     protected void onPause() {

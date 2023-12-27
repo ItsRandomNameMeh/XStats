@@ -25,7 +25,20 @@ public class MainActivity extends AppCompatActivity {
 
     EditText Name, Passwd;
     Button Enter;
+//    Connection connection = null;
+//    Statement statement = null;
+//    ResultSet resultSet = null;
+//    ServerCommunication serverCon;
+//
+//    {
+//        try {
+//            serverCon = new ServerCommunication();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
+    RemoteServerConnection Server = new RemoteServerConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String UserName = Name.getText().toString();
                 String UserPassw = Name.getText().toString();
-
                 Intent intent = new Intent(MainActivity.this, SecondActiv.class);
                 startActivity(intent);
             }
@@ -51,22 +63,28 @@ public class MainActivity extends AppCompatActivity {
         };
         Enter.setOnClickListener(onBtn);
 
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RemoteServerConnection Server = new RemoteServerConnection();
                 try {
                     if (!Server.isStarted()) {
-                        Server.setServerInfo("82.179.140.18", 45888);
+
+                        Server.setServerInfo("82.179.140.18", 45889);
                         Server.connect();
+
 
                         // Добавляем отладочный вывод
                         Log.d("MainActivity", "Подключение к серверу успешно");
 
                         // Перед отправкой сообщения, лучше добавить проверку isStarted()
                         // и обработку ситуации, если подключение не удалось
-                        Server.sendMessage("select nickname from maintable ");
+                        Server.sendMessage("SELECT username FROM dataus");
                         Log.d("Test SQL", Server.receiveMessage());
+                        Name.setText(Server.receiveMessage());
+//                        serverCon = ServerCommunication.getInstance();
+//                        serverCon.sendMessage("SELECT username FROM dataus");
+//                        Log.d("TestSQL2", serverCon.receiveMessage());
 
 
 
@@ -80,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-
-
     }
+
 }
