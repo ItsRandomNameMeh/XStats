@@ -8,21 +8,21 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="95dp"
-        android:layout_height="125dp"
-        android:layout_marginTop="588dp"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginTop="512dp"
         android:text="Monthly expenses"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.949"
+        app:layout_constraintHorizontal_bias="0.964"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="95dp"
-        android:layout_height="125dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="588dp"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="512dp"
         android:text="Expenses for all time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,20 +48,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ToButton"
         app:layout_constraintTop_toBottomOf="@+id/ToButton" />
-
-    <EditText
-        android:id="@+id/editTextNumberDecimal"
-        android:layout_width="155dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="60dp"
-        android:ems="10"
-        android:hint="mileage"
-        android:inputType="numberDecimal"
-        android:textColorHint="@color/sometxt"
-        app:layout_constraintEnd_toEndOf="@+id/button8"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="@+id/button8"
-        app:layout_constraintTop_toBottomOf="@+id/button8" />
 
     <Button
         android:id="@+id/aboutcar"
