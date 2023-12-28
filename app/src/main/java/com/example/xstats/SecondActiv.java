@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,20 +36,8 @@ public class SecondActiv extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
         dialog = new Dialog(SecondActiv.this);
         sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        try {
-            Server.sendMessage("SELECT nextto FROM maintable");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            to = Server.receiveMessage().toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         Button CarForm = findViewById(R.id.aboutcar);
         View.OnClickListener goCar = new View.OnClickListener() {

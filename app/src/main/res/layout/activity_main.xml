@@ -7,6 +7,20 @@
     android:layout_height="match_parent">
 
     <Button
+        android:id="@+id/buttonreg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/ButMain"
+        android:text="Reg"
+        android:textColor="@color/ButBG"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.67" />
+
+    <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,8 +35,8 @@
 
     <EditText
         android:id="@+id/editTextTextPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="247dp"
+        android:layout_height="76dp"
         android:layout_marginBottom="180dp"
         android:ems="10"
         android:hint="Enter a password"
@@ -36,8 +50,8 @@
 
     <EditText
         android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="242dp"
+        android:layout_height="87dp"
         android:layout_marginBottom="232dp"
         android:ems="10"
         android:hint="Enter a nickname"

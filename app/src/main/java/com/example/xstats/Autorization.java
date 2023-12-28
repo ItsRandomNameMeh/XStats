@@ -35,7 +35,7 @@ public class Autorization extends AppCompatActivity {
                 progressDialog.dismiss();
                 EditText log = findViewById(R.id.editTextTextEmailAddress);
                 EditText pas = findViewById(R.id.editTextTextPassword);
-                sqlQuery = "login:SELECT * FROM goin WHERE login = '" + log.getText() + "' AND pass = '" + pas.getText() + "';";
+                sqlQuery = "login:SELECT * FROM goin WHERE username = '" + log.getText() + "' AND pass = '" + pas.getText() + "';";
 
                 // Создаем новый поток для отправки запроса на сервер и получения ответа
                 new Thread(new Runnable() {

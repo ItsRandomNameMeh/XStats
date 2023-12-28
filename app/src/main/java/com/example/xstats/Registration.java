@@ -23,14 +23,12 @@ public class Registration extends AppCompatActivity {
 
         Button but= findViewById(R.id.button2);
 
-        // Получаем экземпляр ServerCommunication
-        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
         but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditText log= findViewById(R.id.editTextLogin);
                 EditText pas= findViewById(R.id.editTextPassword);
-                sqlQuery = "INSERT INTO goin (login, pass) VALUES ( '"+ log.getText()+"', '"+pas.getText()+"');";
+                sqlQuery = "INSERT INTO goin (username, pass) VALUES ( '"+ log.getText()+"', '"+pas.getText()+"');";
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -38,12 +36,8 @@ public class Registration extends AppCompatActivity {
                             serverConnector = ServerCommunication.getInstance();
                             serverConnector.sendMessage(sqlQuery);
                             Log.d("Регистрация", "Успешная Регистрация");
-                            // Сохранить состояние входа в систему
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean("loggedIn", true);
-                            editor.apply();
                             // Переход на следующую активность
-                            Intent intent = new Intent(Registration.this, MainActivity.class);
+                            Intent intent = new Intent(Registration.this, SecondActiv.class);
                             startActivity(intent);
                         } catch (Exception e) {
                             e.printStackTrace();
