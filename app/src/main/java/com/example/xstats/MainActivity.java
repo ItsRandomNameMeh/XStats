@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -25,27 +26,21 @@ public class MainActivity extends AppCompatActivity {
 
     EditText Name, Passwd;
     Button Enter;
-//    Connection connection = null;
-//    Statement statement = null;
-//    ResultSet resultSet = null;
-//    ServerCommunication serverCon;
-//
-//    {
-//        try {
-//            serverCon = new ServerCommunication();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
-    RemoteServerConnection Server = new RemoteServerConnection();
+    ServerCommunication serverConnector;
+
+    String sqlQuery;
+
+
+
+    //RemoteServerConnection Server = new RemoteServerConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Name = findViewById(R.id.editTextTextEmailAddress);
-        Passwd = findViewById(R.id.editTextTextPassword);
+//        Name = findViewById(R.id.editTextTextEmailAddress);
+//        Passwd = findViewById(R.id.editTextTextPassword);
         Button Enter = findViewById(R.id.button);
 
 
@@ -53,10 +48,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                String UserName = Name.getText().toString();
-                String UserPassw = Name.getText().toString();
+                EditText UserName = findViewById(R.id.editTextTextEmailAddress);
+                EditText UserPassw = findViewById(R.id.editTextTextPassword);
                 Intent intent = new Intent(MainActivity.this, SecondActiv.class);
                 startActivity(intent);
+                sqlQuery = "INSERT INTO goin (id, username, pass) VALUES ('"+3+"', '"+ UserName.getText()+"', '"+ UserPassw.getText()+"');";
+
+
             }
 
 
@@ -68,27 +66,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    if (!Server.isStarted()) {
+                    serverConnector = ServerCommunication.getInstance();
+                    serverConnector.sendMessage(sqlQuery);
+                    String response = serverConnector.receiveMessage();
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
 
-                        Server.setServerInfo("82.179.140.18", 45889);
-                        Server.connect();
-
-
-                        // Добавляем отладочный вывод
-                        Log.d("MainActivity", "Подключение к серверу успешно");
-
-                        // Перед отправкой сообщения, лучше добавить проверку isStarted()
-                        // и обработку ситуации, если подключение не удалось
-                        Server.sendMessage("SELECT username FROM dataus");
-                        Log.d("Test SQL", Server.receiveMessage());
-                        Name.setText(Server.receiveMessage());
-//                        serverCon = ServerCommunication.getInstance();
-//                        serverCon.sendMessage("SELECT username FROM dataus");
-//                        Log.d("TestSQL2", serverCon.receiveMessage());
-
-
-
-                    }
+//                    if (!Server.isStarted()) {
+//
+////                        Server.setServerInfo("82.179.140.18", 45889);
+////                        Server.connect();
+//
+//
+//                        // Добавляем отладочный вывод
+//                        Log.d("MainActivity", "Подключение к серверу успешно");
+//
+//                        // Перед отправкой сообщения, лучше добавить проверку isStarted()
+//                        // и обработку ситуации, если подключение не удалось
+//                        Server.sendMessage("SELECT username FROM dataus");
+//                        Server.receiveMessage().toString();
+//                        Log.d("Test SQL", Server.receiveMessage());
+//
+////                        serverCon = ServerCommunication.getInstance();
+////                        serverCon.sendMessage("SELECT username FROM dataus");
+////                        Log.d("TestSQL2", serverCon.receiveMessage());
+//
+//
+//
+//                    }
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -100,4 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showToast(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
 }

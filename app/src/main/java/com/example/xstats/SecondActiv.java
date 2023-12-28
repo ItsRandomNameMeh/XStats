@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View;
+
+import java.io.IOException;
 import java.util.Random;
 import java.util.Base64;
 import android.app.AlertDialog;
@@ -19,18 +21,15 @@ import android.content.SharedPreferences;
 
 public class SecondActiv extends AppCompatActivity {
 
-
-    // Получение экземпляра SharedPreferences
-    //SharedPreferences sharedPreferences = getSharedPreferences("my_cache", Context.MODE_PRIVATE);
     private static final String SHARED_PREFS_NAME = "my_cache";
     private static final String DATA_KEY_TO = "Next_TO";
     private static final String ADD_GAS = "gasoline";
 
     private SharedPreferences sharedPreferences;
+    public String to;
+    public int km = Generative(20,2000);
 
-    public int km = Generative();
-
-
+    RemoteServerConnection Server = new RemoteServerConnection();
     Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +38,17 @@ public class SecondActiv extends AppCompatActivity {
 
         dialog = new Dialog(SecondActiv.this);
         sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        try {
+            Server.sendMessage("SELECT nextto FROM maintable");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            to = Server.receiveMessage().toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         Button CarForm = findViewById(R.id.aboutcar);
         View.OnClickListener goCar = new View.OnClickListener() {
@@ -59,10 +69,8 @@ public class SecondActiv extends AppCompatActivity {
         showToast(month_km+"km");
     }
 
-    public int Generative(){
+    public static int Generative(int min, int max){
         Random rnd = new Random();
-        int min = 20;
-        int max = 2000;
         int randomNumber = rnd.nextInt(max - min + 1) + min;
         return randomNumber;
     }
@@ -93,7 +101,7 @@ public class SecondActiv extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
         EditText txt = new EditText(context);
 
-        ShowInfo("Прошлое ТО было: "+ sharedPreferences.getString(INUSE,""));
+        ShowInfo("Прошлое ТО было: "+ to +sharedPreferences.getString(INUSE,""));
         builder.setTitle("Введите дату следующего ТО\n")
                 .setView(txt)
                 .setMessage("Сохранить?")
@@ -160,14 +168,14 @@ public class SecondActiv extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ShowInfo("Start");
+        //ShowInfo("Start");
     }
 
     @Override
     protected void onResume() {
 
         super.onResume();
-        showToast("Resume");
+       // showToast("Resume");
         updateData();
         restartAnimations();
         registerEventListeners();
@@ -193,25 +201,25 @@ public class SecondActiv extends AppCompatActivity {
     protected void onPause() {
 
         super.onPause();
-        ShowInfo("Pause");
+        //ShowInfo("Pause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ShowInfo("Stop");
+        //ShowInfo("Stop");
     }
 
     @Override
     protected void onRestart() {
-        ShowInfo("Restart");
+        //ShowInfo("Restart");
         super.onRestart();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ShowInfo("Destroy");
+        //ShowInfo("Destroy");
     }
 
     private void ShowInfo(String text){
