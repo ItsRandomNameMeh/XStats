@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,7 +14,6 @@ import android.widget.Toast;
 import android.view.View;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.Base64;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,10 +26,13 @@ public class SecondActiv extends AppCompatActivity {
     private static final String SHARED_PREFS_NAME = "my_cache";
     private static final String DATA_KEY_TO = "Next_TO";
     private static final String ADD_GAS = "gasoline";
+    ServerCommunication serverConnector;
+     Registration reg = new Registration();
+     int HH = reg.UID;
+    String sqlquery;
 
     private SharedPreferences sharedPreferences;
     public String to;
-    public int km = Generative(20,2000);
 
     RemoteServerConnection Server = new RemoteServerConnection();
     Dialog dialog;
@@ -58,11 +62,6 @@ public class SecondActiv extends AppCompatActivity {
         showToast(month_km+"km");
     }
 
-    public static int Generative(int min, int max){
-        Random rnd = new Random();
-        int randomNumber = rnd.nextInt(max - min + 1) + min;
-        return randomNumber;
-    }
     public void ButtnClick(View v){//Все кнопки вынесены вне класса инициализации, иначе после нажатия любой, остальные перестанут работать
         showInputDialog(SecondActiv.this, DATA_KEY_TO);
         setContentView(R.layout.activity_second);
@@ -71,14 +70,52 @@ public class SecondActiv extends AppCompatActivity {
     public void AddGasClick(View v){
         showInputDialog2(SecondActiv.this, ADD_GAS);
         setContentView(R.layout.activity_second);
-    }
+    }//Кнопка заправки
 
     public void MonthStat(View v){
-        MonthToast(SecondActiv.this, Integer.toString(km) );
+        Handler handler = new Handler(Looper.getMainLooper());
+        sqlquery = "SELECT monthst from stat where id_stat = '" +HH+"'";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverConnector = ServerCommunication.getInstance();
+                    serverConnector.sendMessage(sqlquery);
+                    String G = serverConnector.receiveMessage();
+                    handler.post(new Runnable() {//
+                        @Override
+                        public void run() {
+                            EverToast(SecondActiv.this, G);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void YearStat(View v){
-        EverToast(SecondActiv.this, Integer.toString(km*18));
+        Handler handler = new Handler(Looper.getMainLooper());
+        sqlquery = "SELECT yearst from stat where id_stat = '" +HH+"'";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverConnector = ServerCommunication.getInstance();
+                    serverConnector.sendMessage(sqlquery);
+                    String G = serverConnector.receiveMessage();
+                    handler.post(new Runnable() {//
+                        @Override
+                        public void run() {
+                            EverToast(SecondActiv.this, G);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void CarInfo(View v){//Переход дублируется по той же причине, если этого не сделать, то он перестанет работать
@@ -86,19 +123,48 @@ public class SecondActiv extends AppCompatActivity {
         startActivity(intent);
     }
     private void showInputDialog(Context context, String INUSE) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        sqlquery = "SELECT dateto from todate WHERE uid = '" +HH+"'";
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
         EditText txt = new EditText(context);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverConnector = ServerCommunication.getInstance();
+                    serverConnector.sendMessage(sqlquery);
+                    String G = serverConnector.receiveMessage();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ShowInfo("Прошлое ТО:  "+ G );
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
-        ShowInfo("Прошлое ТО было: "+ to +sharedPreferences.getString(INUSE,""));
-        builder.setTitle("Введите дату следующего ТО\n")
+        builder.setTitle("Когда следующее ТО?\n")
                 .setView(txt)
-                .setMessage("Сохранить?")
                 .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        saveDataToCache(txt.toString());
-                        Toast.makeText(SecondActiv.this, "Данные сохранены", Toast.LENGTH_SHORT).show();
+                        String sqlsend = "UPDATE todate SET dateto = '"+ txt.getText() +"' WHERE uid = '" +HH+ "';";
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    serverConnector = ServerCommunication.getInstance();
+                                    serverConnector.sendMessage(sqlsend);
+                                    String G = serverConnector.receiveMessage();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                     }
                 })
                 .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -114,18 +180,48 @@ public class SecondActiv extends AppCompatActivity {
     }
 
     private void showInputDialog2(Context context, String INUSE) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        sqlquery = "SELECT gas from gas where uid = '"+HH+"'";
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
         EditText txt = new EditText(context);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverConnector = ServerCommunication.getInstance();
+                    serverConnector.sendMessage(sqlquery);
+                    String G = serverConnector.receiveMessage();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ShowInfo("Прошлая заправка была на "+ G + " литров.");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
-        ShowInfo("Прошлая заправка была на "+sharedPreferences.getString(INUSE,"") + " литров.");
         builder.setTitle("Сколько заправили сейчас?\n")
                 .setView(txt)
                 .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        saveDataToCache2(txt.toString());
-                        Toast.makeText(SecondActiv.this, "Данные сохранены", Toast.LENGTH_SHORT).show();
+                        String sqlsend = "UPDATE gas SET gas = '"+ txt.getText() +"'  WHERE uid = '"+HH+"';";
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    serverConnector = ServerCommunication.getInstance();
+                                    serverConnector.sendMessage(sqlsend);
+                                    String G = serverConnector.receiveMessage();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                     }
                 })
                 .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -139,17 +235,6 @@ public class SecondActiv extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-    private void saveDataToCache(String TO) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(DATA_KEY_TO, TO);
-            editor.commit();
-        }
-    private void saveDataToCache2(String TO) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(ADD_GAS, TO);
-        editor.apply();
-    }
-
     private void showToast(String message) {
         Toast.makeText(SecondActiv.this, message, Toast.LENGTH_SHORT).show();
     }
@@ -165,26 +250,7 @@ public class SecondActiv extends AppCompatActivity {
 
         super.onResume();
        // showToast("Resume");
-        updateData();
-        restartAnimations();
-        registerEventListeners();
     }
-
-    private void updateData() {
-        // Обновление данных
-    }
-
-    private void restartAnimations() {
-        // Перезапуск анимаций
-    }
-
-    private void registerEventListeners() {
-        // Регистрация слушателей событий
-    }
-
-
-
-
 
     @Override
     protected void onPause() {

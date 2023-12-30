@@ -8,10 +8,10 @@
 
     <Button
         android:id="@+id/buttonreg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="203dp"
+        android:layout_height="53dp"
         android:backgroundTint="@color/ButMain"
-        android:text="Reg"
+        android:text="Registration"
         android:textColor="@color/ButBG"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,8 +22,8 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="203dp"
+        android:layout_height="53dp"
         android:backgroundTint="@color/ButMain"
         android:text="Enter"
         android:textColor="@color/ButBG"
@@ -35,8 +35,8 @@
 
     <EditText
         android:id="@+id/editTextTextPassword"
-        android:layout_width="247dp"
-        android:layout_height="76dp"
+        android:layout_width="242dp"
+        android:layout_height="86dp"
         android:layout_marginBottom="180dp"
         android:ems="10"
         android:hint="Enter a password"
