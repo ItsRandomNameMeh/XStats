@@ -12,11 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.text.MessageFormat;
-
 public class Registration extends AppCompatActivity {
     private String sqlQuery;
     public int UID;
+
+    MainActivity malk = new MainActivity();
     ServerCommunication serverConnector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,26 +29,30 @@ public class Registration extends AppCompatActivity {
         but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText log= findViewById(R.id.editTextLogin);
-                EditText pas= findViewById(R.id.editTextPassword);
-                sqlQuery = "INSERT INTO goin (username, pass, uid) VALUES ( '"+ log.getText()+"', '"+pas.getText()+"', '"+UID+"'); " +
-                        "INSERT INTO gas (gas, uid) VALUES (0,'"+UID+"') ON CONFLICT DO NOTHING; INSERT INTO todate (dateto, uid) VALUES('12.12.12', '"+UID+"') ON CONFLICT DO NOTHING; " +
-                        "INSERT INTO stat (monthst, yearst, uid) VALUES ('0','0', '"+UID+"') ON CONFLICT DO NOTHING";
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            serverConnector = ServerCommunication.getInstance();
-                            serverConnector.sendMessage(sqlQuery);
-                            Log.d("Регистрация", "Успешная Регистрация");
-                            // Переход на следующую активность
-                            Intent intent = new Intent(Registration.this, SecondActiv.class);
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                EditText UserName = findViewById(R.id.editTextLogin);
+                EditText UserPass = findViewById(R.id.editTextTextPassword);
+
+                Intent intent = new Intent(Registration.this, SecondActiv.class);
+                startActivity(intent);
+//                EditText log= findViewById(R.id.editTextLogin);
+//                EditText pas= findViewById(R.id.editTextPassword);
+//                sqlQuery = "INSERT INTO goin (username, pass, uid) VALUES ( '"+ log.getText()+"', '"+pas.getText()+"', '"+UID+"'); " +
+//                        "INSERT INTO gas (gas, uid) VALUES (0,'"+UID+"') ON CONFLICT DO NOTHING; INSERT INTO todate (dateto, uid) VALUES('12.12.12', '"+UID+"') ON CONFLICT DO NOTHING; " +
+//                        "INSERT INTO stat (monthst, yearst, uid) VALUES ('0','0', '"+UID+"') ON CONFLICT DO NOTHING";
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            serverConnector = ServerCommunication.getInstance();
+//                            serverConnector.sendMessage(sqlQuery);
+//                            Log.d("Регистрация", "Успешная Регистрация");
+//                            // Переход на следующую активность
+//
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
             }
         });
     }

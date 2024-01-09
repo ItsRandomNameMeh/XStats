@@ -1,35 +1,26 @@
 package com.example.xstats;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.Activity;
-import android.app.Application;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.View;
-import java.sql.*;
 import android.widget.Button;
 import android.widget.EditText;
-import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.example.xstats.RemoteServerConnection;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    EditText Name, Passwd;
+    EditText Name, Pass;
     Button Enter;
 
-    ServerCommunication serverConnector;
+    SharedPreferences sPref;
+    final String SAVED_USER = "saved_user";
+    final String SAVED_PASS = "saved_pass";
 
-    String sqlQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,33 +28,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button Enter = findViewById(R.id.button);
         Button Reg = findViewById(R.id.buttonreg);
-
+        Name = findViewById(R.id.editTextTextEmailAddress);
+        Pass = findViewById(R.id.editTextTextPassword);
+        sPref = getSharedPreferences(SAVED_USER,MODE_PRIVATE);
+        sPref = getSharedPreferences(SAVED_PASS,MODE_PRIVATE);
         View.OnClickListener onBtn = new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                EditText UserName = findViewById(R.id.editTextTextEmailAddress);
-                EditText UserPassw = findViewById(R.id.editTextTextPassword);
-                sqlQuery = "login:SELECT * FROM goin WHERE username = '" + UserName.getText() + "' AND pass = '" + UserPassw.getText() + "';";
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            serverConnector = ServerCommunication.getInstance();
-                            serverConnector.sendMessage(sqlQuery);
-                            String response = serverConnector.receiveMessage();
-                            if (response.equals("true")){
-                                Intent intent = new Intent(MainActivity.this, SecondActiv.class);
-                                startActivity(intent);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                saveAcc();
+            }
 
-                            // Добавляем отладочный вывод в случае ошибки
-                            Log.e("MainActivity", "Ошибка подключения к серверу: " + e.getMessage());
-                        }
-                    }
-                }).start();
+            private void saveAcc() {
+
+                String getName = Name.getText().toString();
+                String getPass = Pass.getText().toString();
+
+                if (getPass.equals(sPref.getString(getName,""))){
+
+                    showToast("Вы вошли в свой аккаунт!");
+                    Intent intent = new Intent(MainActivity.this, SecondActiv.class);
+                    startActivity(intent);}
+                else if(!sPref.contains(getName)){
+                    showToast("Такого аккаунта не существует, нажмити кнопку 'Registration' ");
+                }
+                else if (!getPass.equals(sPref.getString(getName,""))) {
+
+                    showToast("Пароль введен не верно");
+
+                }
 
             }
 
@@ -73,8 +66,21 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener regbtn = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Registration.class);
+                loadAcc();
+                Intent intent = new Intent(MainActivity.this, SecondActiv.class);
                 startActivity(intent);
+            }
+
+            private void loadAcc() {
+                String getName = Name.getText().toString();
+                String getPass = Pass.getText().toString();
+
+                SharedPreferences.Editor ed = sPref.edit();
+
+                ed.putString(getName, getPass);
+                ed.apply();
+                showToast("Аккаунт успешно создан!");
+
             }
         };
         Reg.setOnClickListener(regbtn);

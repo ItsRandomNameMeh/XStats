@@ -7,28 +7,42 @@
     tools:context=".CarActivity">
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="218dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="200dp"
-        android:text="MyCar"
+        android:id="@+id/carbtn"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginTop="16dp"
         android:onClick="MyInfo"
+        android:text="MyCar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/fuelbtn"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
         android:layout_marginStart="162dp"
-        android:layout_marginTop="276dp"
+        android:layout_marginTop="256dp"
         android:layout_marginEnd="156dp"
         android:onClick="GasInfo"
-        android:text="Average fuel consumption"
+        android:text="Fines"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/costbtn"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginStart="162dp"
+        android:layout_marginTop="500dp"
+        android:layout_marginEnd="156dp"
+        android:onClick="AddCost"
+        android:text="Add cost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

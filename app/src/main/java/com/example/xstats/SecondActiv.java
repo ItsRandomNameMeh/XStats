@@ -24,16 +24,13 @@ import android.content.SharedPreferences;
 public class SecondActiv extends AppCompatActivity {
 
     private static final String SHARED_PREFS_NAME = "my_cache";
-    private static final String DATA_KEY_TO = "Next_TO";
+    final String DATA_KEY_TO = "Next_TO";
     private static final String ADD_GAS = "gasoline";
-    ServerCommunication serverConnector;
-     Registration reg = new Registration();
-     int HH = reg.UID;
-    String sqlquery;
 
-    private SharedPreferences sharedPreferences;
-    public String to;
+    SharedPreferences sPref;
+    Registration reg = new Registration();
 
+    MainActivity mainy = new MainActivity();
     RemoteServerConnection Server = new RemoteServerConnection();
     Dialog dialog;
     @Override
@@ -41,8 +38,6 @@ public class SecondActiv extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         dialog = new Dialog(SecondActiv.this);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
         Button CarForm = findViewById(R.id.aboutcar);
         View.OnClickListener goCar = new View.OnClickListener() {
             @Override
@@ -63,7 +58,7 @@ public class SecondActiv extends AppCompatActivity {
     }
 
     public void ButtnClick(View v){//Все кнопки вынесены вне класса инициализации, иначе после нажатия любой, остальные перестанут работать
-        showInputDialog(SecondActiv.this, DATA_KEY_TO);
+        showInputDialog(SecondActiv.this);//TO
         setContentView(R.layout.activity_second);
     }
 
@@ -72,99 +67,33 @@ public class SecondActiv extends AppCompatActivity {
         setContentView(R.layout.activity_second);
     }//Кнопка заправки
 
-    public void MonthStat(View v){
-        Handler handler = new Handler(Looper.getMainLooper());
-        sqlquery = "SELECT monthst from stat where id_stat = '" +HH+"'";
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverConnector = ServerCommunication.getInstance();
-                    serverConnector.sendMessage(sqlquery);
-                    String G = serverConnector.receiveMessage();
-                    handler.post(new Runnable() {//
-                        @Override
-                        public void run() {
-                            EverToast(SecondActiv.this, G);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public void MonthStat(View v){//Метод работы кнопки вывода информации об аккаунте
     }
 
-    public void YearStat(View v){
-        Handler handler = new Handler(Looper.getMainLooper());
-        sqlquery = "SELECT yearst from stat where id_stat = '" +HH+"'";
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverConnector = ServerCommunication.getInstance();
-                    serverConnector.sendMessage(sqlquery);
-                    String G = serverConnector.receiveMessage();
-                    handler.post(new Runnable() {//
-                        @Override
-                        public void run() {
-                            EverToast(SecondActiv.this, G);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public void YearStat(View v){//Метод работы кнопки годовой статистики
     }
 
     public void CarInfo(View v){//Переход дублируется по той же причине, если этого не сделать, то он перестанет работать
         Intent intent = new Intent(SecondActiv.this, CarActivity.class);
         startActivity(intent);
     }
-    private void showInputDialog(Context context, String INUSE) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        sqlquery = "SELECT dateto from todate WHERE uid = '" +HH+"'";
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
-        EditText txt = new EditText(context);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverConnector = ServerCommunication.getInstance();
-                    serverConnector.sendMessage(sqlquery);
-                    String G = serverConnector.receiveMessage();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ShowInfo("Прошлое ТО:  "+ G );
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    private void showInputDialog(Context context) {//Метод, реализующий часть логики кнопки "следующее ТО"
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String Hu = DATA_KEY_TO+ mainy.findViewById(R.id.editTextTextEmailAddress).toString();
+        sPref = getSharedPreferences(Hu , MODE_PRIVATE);
+        EditText txt = new EditText(context);
+        txt.setText(sPref.getString(Hu, "")+"\n(поставьте нужную дату или нажмите 'отмена')");
         builder.setTitle("Когда следующее ТО?\n")
                 .setView(txt)
                 .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String sqlsend = "UPDATE todate SET dateto = '"+ txt.getText() +"' WHERE uid = '" +HH+ "';";
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    serverConnector = ServerCommunication.getInstance();
-                                    serverConnector.sendMessage(sqlsend);
-                                    String G = serverConnector.receiveMessage();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
+                        SharedPreferences.Editor ed = sPref.edit();
+
+                        ed.putString(Hu, txt.getText().toString());
+                        ed.apply();
+                        showToast("Данные сохранены успешно! ");
                     }
                 })
                 .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -179,49 +108,21 @@ public class SecondActiv extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void showInputDialog2(Context context, String INUSE) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        sqlquery = "SELECT gas from gas where uid = '"+HH+"'";
+    private void showInputDialog2(Context context, String INUSE) {//Метод реализующий часть кнопки "Сколько заправили"
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME,Context.MODE_PRIVATE);
+        sPref = getSharedPreferences(ADD_GAS,MODE_PRIVATE);
         EditText txt = new EditText(context);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverConnector = ServerCommunication.getInstance();
-                    serverConnector.sendMessage(sqlquery);
-                    String G = serverConnector.receiveMessage();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ShowInfo("Прошлая заправка была на "+ G + " литров.");
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
         builder.setTitle("Сколько заправили сейчас?\n")
                 .setView(txt)
                 .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String sqlsend = "UPDATE gas SET gas = '"+ txt.getText() +"'  WHERE uid = '"+HH+"';";
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    serverConnector = ServerCommunication.getInstance();
-                                    serverConnector.sendMessage(sqlsend);
-                                    String G = serverConnector.receiveMessage();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
+                        SharedPreferences.Editor ed = sPref.edit();
+                        ed.putString(ADD_GAS,txt.getText().toString());
+                        ed.commit();
+                        showToast("Заправка добавлена!");
                     }
                 })
                 .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {

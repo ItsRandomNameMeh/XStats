@@ -12,7 +12,7 @@
         android:layout_height="215dp"
         android:layout_marginTop="512dp"
         android:onClick="MonthStat"
-        android:text="Monthly expenses"
+        android:text="Your Account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.964"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,35 +31,37 @@
 
     <Button
         android:id="@+id/ToButton"
-        android:layout_width="159dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="268dp"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginTop="24dp"
         android:onClick="ButtnClick"
         android:text="Next TO"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.964"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button8"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginTop="24dp"
         android:onClick="AddGasClick"
         android:text="Add gasoline"
         app:layout_constraintEnd_toEndOf="@+id/ToButton"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/ToButton"
-        app:layout_constraintTop_toBottomOf="@+id/ToButton" />
+        app:layout_constraintHorizontal_bias="0.02"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/aboutcar"
-        android:layout_width="159dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="172dp"
-        android:text="About Car"
+        android:layout_width="212dp"
+        android:layout_height="215dp"
+        android:layout_marginTop="264dp"
         android:onClick="CarInfo"
+        android:text="About Car"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
